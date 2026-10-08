@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float } from '@react-three/drei';
 import * as THREE from 'three';
+import ErrorBoundary from '../ErrorBoundary';
 
 // 1. AI Neural Network
 function NeuralCoreMesh({ isSelected }) {
@@ -175,19 +176,21 @@ function FusionCoreMesh({ isSelected }) {
 export default function FutureLabCanvas({ activeProjectId }) {
   return (
     <div className="w-full h-full min-h-[360px] sm:min-h-[440px]">
-      <Canvas camera={{ position: [0, 0, 4.5], fov: 45 }} dpr={[1, 1.5]}>
-        <ambientLight intensity={0.6} />
-        <pointLight position={[5, 5, 5]} intensity={2} color="#00f0ff" />
-        <pointLight position={[-5, -5, -5]} intensity={1.5} color="#8a2be2" />
+      <ErrorBoundary>
+        <Canvas camera={{ position: [0, 0, 4.5], fov: 45 }} dpr={[1, 1.5]}>
+          <ambientLight intensity={0.6} />
+          <pointLight position={[5, 5, 5]} intensity={2} color="#00f0ff" />
+          <pointLight position={[-5, -5, -5]} intensity={1.5} color="#8a2be2" />
 
-        <Float speed={2} rotationIntensity={0.6} floatIntensity={1}>
-          {activeProjectId === 'neural-network' && <NeuralCoreMesh isSelected={true} />}
-          {activeProjectId === 'quantum-satellite' && <SatelliteMesh isSelected={true} />}
-          {activeProjectId === 'cyber-arm' && <RoboticArmMesh isSelected={true} />}
-          {activeProjectId === 'digital-planet' && <DigitalPlanetMesh isSelected={true} />}
-          {activeProjectId === 'fusion-core' && <FusionCoreMesh isSelected={true} />}
-        </Float>
-      </Canvas>
+          <Float speed={2} rotationIntensity={0.6} floatIntensity={1}>
+            {activeProjectId === 'neural-network' && <NeuralCoreMesh isSelected={true} />}
+            {activeProjectId === 'quantum-satellite' && <SatelliteMesh isSelected={true} />}
+            {activeProjectId === 'cyber-arm' && <RoboticArmMesh isSelected={true} />}
+            {activeProjectId === 'digital-planet' && <DigitalPlanetMesh isSelected={true} />}
+            {activeProjectId === 'fusion-core' && <FusionCoreMesh isSelected={true} />}
+          </Float>
+        </Canvas>
+      </ErrorBoundary>
     </div>
   );
 }

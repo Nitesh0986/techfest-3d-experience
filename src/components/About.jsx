@@ -3,6 +3,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { motion, useInView } from 'framer-motion';
 import { Sparkles, Terminal, Activity, Layers } from 'lucide-react';
 import { FESTIVAL_STATS } from '../utils/constants';
+import ErrorBoundary from './ErrorBoundary';
 
 function QuantumGyroscope() {
   const mesh1 = useRef();
@@ -156,13 +157,15 @@ export default function About() {
               <span>LIVE 3D QUANTUM GYROSCOPE</span>
             </div>
 
-            <Canvas camera={{ position: [0, 0, 3.8], fov: 45 }} dpr={[1, 1.5]}>
-              <ambientLight intensity={0.5} />
-              <pointLight position={[5, 5, 5]} intensity={1.5} color="#00f0ff" />
-              <Suspense fallback={null}>
-                <QuantumGyroscope />
-              </Suspense>
-            </Canvas>
+            <ErrorBoundary>
+              <Canvas camera={{ position: [0, 0, 3.8], fov: 45 }} dpr={[1, 1.5]}>
+                <ambientLight intensity={0.5} />
+                <pointLight position={[5, 5, 5]} intensity={1.5} color="#00f0ff" />
+                <Suspense fallback={null}>
+                  <QuantumGyroscope />
+                </Suspense>
+              </Canvas>
+            </ErrorBoundary>
 
             <div className="absolute bottom-3 inset-x-3 text-center">
               <p className="font-mono text-[9px] text-slate-500 tracking-widest uppercase">

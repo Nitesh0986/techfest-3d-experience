@@ -13,6 +13,7 @@ import Footer from './components/Footer';
 import RegisterModal from './components/RegisterModal';
 import { useScrollProgress } from './hooks/useScrollProgress';
 import { useMouseParallax } from './hooks/useMouseParallax';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +24,8 @@ export default function App() {
   const mouse = useMouseParallax();
 
   return (
-    <div className="relative min-h-screen bg-[#030712] text-slate-100 selection:bg-cyan-500 selection:text-black">
+    <ErrorBoundary>
+      <div className="relative min-h-screen bg-[#030712] text-slate-100 selection:bg-cyan-500 selection:text-black">
       {/* Loading Experience */}
       {isLoading && <LoadingScreen onLoaded={() => setIsLoading(false)} />}
 
@@ -79,5 +81,6 @@ export default function App() {
         onClose={() => setIsRegisterOpen(false)}
       />
     </div>
+  </ErrorBoundary>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LoadingScreen({ onLoaded }) {
@@ -6,6 +6,8 @@ export default function LoadingScreen({ onLoaded }) {
   const [subsystemIndex, setSubsystemIndex] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const [webGlSupported, setWebGlSupported] = useState(true);
+  const onLoadedRef = useRef(onLoaded);
+  onLoadedRef.current = onLoaded;
 
   const subsystems = [
     'CONNECTING TO QUANTUM GRID...',
@@ -27,44 +29,63 @@ export default function LoadingScreen({ onLoaded }) {
       setWebGlSupported(false);
     }
 
-    const interval = setInterval(() => {
+    let intervalId = null;
+
+    const completeLoading = () => {
+      if (intervalId) clearInterval(intervalId);
+      setProgress(100);
+      setIsDone(true);
+      setTimeout(() => {
+        if (onLoadedRef.current) onLoadedRef.current();
+      }, 500);
+    };
+
+    intervalId = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setIsDone(true);
-            setTimeout(onLoaded, 600);
-          }, 300);
+          clearInterval(intervalId);
+          setTimeout(completeLoading, 200);
           return 100;
         }
-        const increment = Math.floor(Math.random() * 12) + 6;
+        const increment = Math.floor(Math.random() * 14) + 8;
         const next = Math.min(prev + increment, 100);
         const subIndex = Math.min(
           Math.floor((next / 100) * subsystems.length),
           subsystems.length - 1
         );
         setSubsystemIndex(subIndex);
+        if (next >= 100) {
+          setTimeout(completeLoading, 200);
+        }
         return next;
       });
-    }, 90);
+    }, 75);
 
-    return () => clearInterval(interval);
-  }, [onLoaded, subsystems.length]);
+    // Hard fallback safety timer: dismiss no matter what after 2.2s
+    const hardFallback = setTimeout(() => {
+      completeLoading();
+    }, 2200);
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      clearTimeout(hardFallback);
+    };
+  }, []); // Run only once
 
   return (
     <AnimatePresence>
       {!isDone && (
         <motion.div
-          exit={{ opacity: 0, y: -40, filter: 'blur(10px)' }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030712] text-white px-6"
+          exit={{ opacity: 0, y: -30, filter: 'blur(8px)' }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030712] text-white px-6 pointer-events-none"
         >
           {/* Subtle background ambient glow */}
           <div className="absolute w-96 h-96 rounded-full bg-cyan-500/10 blur-[100px] pointer-events-none" />
           <div className="absolute w-96 h-96 rounded-full bg-purple-500/10 blur-[100px] pointer-events-none translate-x-32 translate-y-32" />
 
           {/* Hologram Box */}
-          <div className="relative z-10 w-full max-w-md p-8 glass-panel rounded-2xl border border-cyan-500/30 text-center">
+          <div className="relative z-10 w-full max-w-md p-8 glass-panel rounded-2xl border border-cyan-500/30 text-center pointer-events-auto">
             {/* Hexagon icon */}
             <div className="mx-auto w-16 h-16 mb-6 flex items-center justify-center relative">
               <div className="absolute inset-0 rounded-xl bg-cyan-500/20 animate-ping opacity-50" />

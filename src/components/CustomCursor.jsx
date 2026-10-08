@@ -23,6 +23,10 @@ export default function CustomCursor() {
 
       // Check what element is under the cursor
       const target = e.target;
+      if (!target || typeof target.closest !== 'function') {
+        setCursorType('default');
+        return;
+      }
       if (
         target.closest('button') ||
         target.closest('a') ||

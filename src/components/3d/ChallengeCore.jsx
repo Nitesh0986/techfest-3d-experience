@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
+import ErrorBoundary from '../ErrorBoundary';
 
 const PILLARS = [
   { label: 'BUILD', color: '#00f0ff', pos: [1.8, 1.2, 0] },
@@ -104,10 +105,12 @@ function TesseractCore() {
 export default function ChallengeCore() {
   return (
     <div className="w-full h-[380px] sm:h-[460px] pointer-events-none">
-      <Canvas camera={{ position: [0, 0, 5.2], fov: 45 }} dpr={[1, 1.5]}>
-        <ambientLight intensity={0.5} />
-        <TesseractCore />
-      </Canvas>
+      <ErrorBoundary>
+        <Canvas camera={{ position: [0, 0, 5.2], fov: 45 }} dpr={[1, 1.5]}>
+          <ambientLight intensity={0.5} />
+          <TesseractCore />
+        </Canvas>
+      </ErrorBoundary>
     </div>
   );
 }

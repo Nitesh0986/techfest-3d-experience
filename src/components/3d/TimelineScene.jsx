@@ -1,6 +1,7 @@
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import ErrorBoundary from '../ErrorBoundary';
 
 function GlowingTimelineSpline({ activeIndex }) {
   const lineRef = useRef();
@@ -73,11 +74,13 @@ function GlowingTimelineSpline({ activeIndex }) {
 export default function TimelineScene({ activeIndex }) {
   return (
     <div className="w-full h-[220px] sm:h-[260px] pointer-events-none">
-      <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 1.5]}>
-        <ambientLight intensity={0.6} />
-        <pointLight position={[0, 4, 3]} intensity={2} color="#00f0ff" />
-        <GlowingTimelineSpline activeIndex={activeIndex} />
-      </Canvas>
+      <ErrorBoundary>
+        <Canvas camera={{ position: [0, 0, 5], fov: 50 }} dpr={[1, 1.5]}>
+          <ambientLight intensity={0.6} />
+          <pointLight position={[0, 4, 3]} intensity={2} color="#00f0ff" />
+          <GlowingTimelineSpline activeIndex={activeIndex} />
+        </Canvas>
+      </ErrorBoundary>
     </div>
   );
 }

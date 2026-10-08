@@ -53,7 +53,6 @@ function PillarObject({ data, onSelect }) {
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
         onClick={handleClick}
-        data-cursor="explore"
       >
         {/* Render distinct shapes according to object id */}
         {data.id === 'innovation' && (
