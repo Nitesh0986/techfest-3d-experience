@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float } from '@react-three/drei';
+import { Float, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import ErrorBoundary from '../ErrorBoundary';
 
@@ -181,6 +181,14 @@ export default function FutureLabCanvas({ activeProjectId }) {
           <ambientLight intensity={0.6} />
           <pointLight position={[5, 5, 5]} intensity={2} color="#00f0ff" />
           <pointLight position={[-5, -5, -5]} intensity={1.5} color="#8a2be2" />
+
+          <OrbitControls
+            enableZoom={false}
+            autoRotate
+            autoRotateSpeed={0.8}
+            maxPolarAngle={Math.PI / 1.6}
+            minPolarAngle={Math.PI / 3}
+          />
 
           <Float speed={2} rotationIntensity={0.6} floatIntensity={1}>
             {activeProjectId === 'neural-network' && <NeuralCoreMesh isSelected={true} />}

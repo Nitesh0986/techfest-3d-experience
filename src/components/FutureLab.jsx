@@ -15,7 +15,7 @@ export default function FutureLab({ onOpenRegisterModal }) {
   };
 
   return (
-    <section id="future-lab" className="relative py-28 sm:py-36 bg-[#030712] border-t border-cyan-500/10 overflow-hidden">
+    <section id="future-lab" className="relative py-28 sm:py-36 bg-[#030712]/80 backdrop-blur-md border-t border-cyan-500/10 overflow-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-cyan-600/5 rounded-full blur-[140px] pointer-events-none" />
 

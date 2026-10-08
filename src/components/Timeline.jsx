@@ -16,7 +16,7 @@ export default function Timeline() {
   const current = TIMELINE_STEPS[activeStep];
 
   return (
-    <section id="timeline" className="relative py-28 sm:py-36 bg-[#030712] border-t border-cyan-500/10 overflow-hidden">
+    <section id="timeline" className="relative py-28 sm:py-36 bg-[#030712]/80 backdrop-blur-md border-t border-cyan-500/10 overflow-hidden">
       {/* Background glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-cyan-500/5 blur-[140px] pointer-events-none" />
 

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import LoadingScreen from './components/LoadingScreen';
 import CustomCursor from './components/CustomCursor';
 import Navbar from './components/Navbar';
+import HeroScene from './components/3d/HeroScene';
 import Hero from './components/Hero';
 import About from './components/About';
 import Domains from './components/Domains';
@@ -36,6 +37,14 @@ export default function App() {
       <div className="fixed inset-0 cyber-grid opacity-25 pointer-events-none -z-20" />
       <div className="fixed inset-0 scanlines opacity-30 pointer-events-none -z-10" />
 
+      {/* Persistent Continuous 3D Canvas across the entire scroll experience */}
+      <HeroScene
+        scrollProgress={scrollProgress}
+        mouse={mouse}
+        onSelectObject={(obj) => setSelectedHeroObject(obj)}
+        focusTarget={selectedHeroObject}
+      />
+
       {/* Fixed Sci-Fi Navigation Bar */}
       <Navbar
         activeSection={activeSection}
@@ -44,10 +53,8 @@ export default function App() {
 
       {/* Main Content Sections */}
       <main className="relative flex flex-col">
-        {/* 1. HERO SECTION WITH 3D CANVAS */}
+        {/* 1. HERO SECTION */}
         <Hero
-          scrollProgress={scrollProgress}
-          mouse={mouse}
           selectedObject={selectedHeroObject}
           setSelectedObject={setSelectedHeroObject}
           onOpenRegisterModal={() => setIsRegisterOpen(true)}

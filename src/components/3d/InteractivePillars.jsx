@@ -5,19 +5,24 @@ import * as THREE from 'three';
 import { HERO_PILLARS } from '../../utils/constants';
 import { soundManager } from '../../utils/audio';
 
-function PillarObject({ data, onSelect }) {
+function PillarObject({ data, onSelect, scrollProgress = 0 }) {
   const meshRef = useRef();
   const innerRef = useRef();
   const [hovered, setHovered] = useState(false);
   const targetScale = hovered ? 1.25 : 1.0;
   const currentScale = useRef(1.0);
 
+  // Smooth scroll visibility factor (visible in Hero, fades out when sp > 0.16)
+  const heroVisibility = Math.max(0, Math.min(1, 1 - (scrollProgress - 0.08) / 0.12));
+
   useFrame((state, delta) => {
     if (!meshRef.current) return;
 
-    // Smooth hover scale lerp
+    // Smooth hover scale lerp modulated by scroll visibility
     currentScale.current += (targetScale - currentScale.current) * 0.12;
-    meshRef.current.scale.set(currentScale.current, currentScale.current, currentScale.current);
+    const effScale = currentScale.current * heroVisibility;
+    meshRef.current.scale.set(effScale, effScale, effScale);
+    meshRef.current.visible = effScale > 0.02;
 
     // Idle rotation (rotates faster on hover)
     const rotSpeed = hovered ? 1.4 : 0.4;
@@ -134,44 +139,51 @@ function PillarObject({ data, onSelect }) {
       </group>
 
       {/* Floating 3D Tooltip Tag */}
-      <Html
-        position={[0, 0.9, 0]}
-        center
-        distanceFactor={10}
-        style={{
-          transition: 'all 0.25s ease-out',
-          opacity: hovered ? 1 : 0.75,
-          transform: hovered ? 'scale(1.1)' : 'scale(0.95)',
-          pointerEvents: 'none',
-        }}
-      >
-        <div
-          onClick={handleClick}
-          className={`pointer-events-auto cursor-pointer select-none px-2.5 py-1 rounded-md border text-center whitespace-nowrap transition-all ${
-            hovered
-              ? 'glass-panel-glow border-cyan-400 bg-cyan-950/90 shadow-[0_0_15px_rgba(0,240,255,0.6)]'
-              : 'glass-panel border-cyan-500/30 bg-slate-950/70'
-          }`}
+      {heroVisibility > 0.05 && (
+        <Html
+          position={[0, 0.9, 0]}
+          center
+          distanceFactor={10}
+          style={{
+            transition: 'all 0.25s ease-out',
+            opacity: heroVisibility * (hovered ? 1 : 0.75),
+            transform: hovered ? 'scale(1.1)' : 'scale(0.95)',
+            pointerEvents: heroVisibility > 0.4 ? 'auto' : 'none',
+          }}
         >
-          <div className="font-orbitron text-[9px] font-bold tracking-widest text-cyan-300">
-            {data.number} // {data.title}
-          </div>
-          {hovered && (
-            <div className="font-mono text-[8px] text-cyan-200/80 tracking-tight mt-0.5 animate-pulse">
-              [CLICK TO INSPECT]
+          <div
+            onClick={handleClick}
+            className={`pointer-events-auto cursor-pointer select-none px-2.5 py-1 rounded-md border text-center whitespace-nowrap transition-all ${
+              hovered
+                ? 'glass-panel-glow border-cyan-400 bg-cyan-950/90 shadow-[0_0_15px_rgba(0,240,255,0.6)]'
+                : 'glass-panel border-cyan-500/30 bg-slate-950/70'
+            }`}
+          >
+            <div className="font-orbitron text-[9px] font-bold tracking-widest text-cyan-300">
+              {data.number} // {data.title}
             </div>
-          )}
-        </div>
-      </Html>
+            {hovered && (
+              <div className="font-mono text-[8px] text-cyan-200/80 tracking-tight mt-0.5 animate-pulse">
+                [CLICK TO INSPECT]
+              </div>
+            )}
+          </div>
+        </Html>
+      )}
     </group>
   );
 }
 
-export default function InteractivePillars({ onSelectObject }) {
+export default function InteractivePillars({ onSelectObject, scrollProgress = 0 }) {
   return (
     <group>
       {HERO_PILLARS.map((pillar) => (
-        <PillarObject key={pillar.id} data={pillar} onSelect={onSelectObject} />
+        <PillarObject
+          key={pillar.id}
+          data={pillar}
+          onSelect={onSelectObject}
+          scrollProgress={scrollProgress}
+        />
       ))}
     </group>
   );

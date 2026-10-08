@@ -32,7 +32,7 @@ export default function CTA({ onOpenRegisterModal }) {
   };
 
   return (
-    <section id="cta" className="relative py-32 sm:py-44 bg-[#030712] border-t border-cyan-500/10 overflow-hidden text-center">
+    <section id="cta" className="relative py-32 sm:py-44 bg-[#030712]/70 backdrop-blur-md border-t border-cyan-500/10 overflow-hidden text-center">
       {/* Background cyber radial glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] bg-gradient-to-r from-cyan-500/15 via-purple-600/15 to-cyan-500/15 rounded-full blur-[160px] pointer-events-none" />
 

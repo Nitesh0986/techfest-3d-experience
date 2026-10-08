@@ -21,7 +21,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-[#02050e] border-t border-cyan-500/20 text-slate-400 py-16 overflow-hidden">
+    <footer className="relative bg-[#02050e]/90 backdrop-blur-lg border-t border-cyan-500/20 text-slate-400 py-16 overflow-hidden">
       {/* Background sci-fi grid overlay */}
       <div className="absolute inset-0 cyber-grid opacity-20 pointer-events-none" />
 

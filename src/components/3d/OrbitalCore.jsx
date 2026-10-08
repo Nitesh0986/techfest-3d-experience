@@ -27,42 +27,51 @@ export default function OrbitalCore({ scrollProgress = 0, mouse = { x: 0, y: 0 }
 
     if (groupRef.current) {
       // Mouse sway & scroll-induced rotation
-      groupRef.current.rotation.y = t * 0.15 + mouse.x * 0.35 + scrollProgress * Math.PI * 2;
-      groupRef.current.rotation.x = mouse.y * 0.25 + Math.sin(t * 0.2) * 0.1;
+      const scrollRotation = scrollProgress * Math.PI * 3;
+      groupRef.current.rotation.y = t * 0.18 + mouse.x * 0.4 + scrollRotation;
+      groupRef.current.rotation.x = mouse.y * 0.25 + Math.sin(t * 0.25) * 0.1 + scrollProgress * 0.8;
+      groupRef.current.rotation.z = Math.sin(t * 0.15) * 0.08 + scrollProgress * 0.5;
 
       // Dynamic scale transformation with scroll
-      const scale = 1 + Math.sin(scrollProgress * Math.PI) * 0.4;
+      const scale = 1 + Math.sin(scrollProgress * Math.PI) * 0.35;
       groupRef.current.scale.set(scale, scale, scale);
     }
 
     if (innerSphereRef.current) {
-      // Pulsing nucleus
-      const pulse = 1 + Math.sin(t * 2.5) * 0.08;
+      // Pulsing nucleus - intensifies with scroll
+      const pulseSpeed = 2.5 + scrollProgress * 4;
+      const pulse = 1 + Math.sin(t * pulseSpeed) * (0.08 + scrollProgress * 0.08);
       innerSphereRef.current.scale.set(pulse, pulse, pulse);
-      innerSphereRef.current.rotation.y += delta * 0.4;
+      innerSphereRef.current.rotation.y += delta * (0.4 + scrollProgress * 0.8);
     }
 
     if (outerSphereRef.current) {
-      outerSphereRef.current.rotation.y -= delta * 0.2;
-      outerSphereRef.current.rotation.z += delta * 0.1;
+      outerSphereRef.current.rotation.y -= delta * (0.2 + scrollProgress * 0.6);
+      outerSphereRef.current.rotation.z += delta * 0.2;
     }
 
-    // Rings rotating along multiple axes
+    // Rings expand like an interstellar gate as camera approaches
+    const ringExpansion = 1 + Math.sin(Math.min(scrollProgress * Math.PI, Math.PI)) * 0.6;
     if (ring1Ref.current) {
-      ring1Ref.current.rotation.x += delta * 0.6;
+      ring1Ref.current.rotation.x += delta * (0.6 + scrollProgress * 1.2);
       ring1Ref.current.rotation.y += delta * 0.3;
+      ring1Ref.current.scale.set(ringExpansion, ringExpansion, ringExpansion);
     }
     if (ring2Ref.current) {
-      ring2Ref.current.rotation.y -= delta * 0.5;
+      ring2Ref.current.rotation.y -= delta * (0.5 + scrollProgress * 1.0);
       ring2Ref.current.rotation.z += delta * 0.4;
+      ring2Ref.current.scale.set(ringExpansion * 1.05, ringExpansion * 1.05, ringExpansion * 1.05);
     }
     if (ring3Ref.current) {
-      ring3Ref.current.rotation.x -= delta * 0.4;
+      ring3Ref.current.rotation.x -= delta * (0.4 + scrollProgress * 0.9);
       ring3Ref.current.rotation.z -= delta * 0.5;
+      ring3Ref.current.scale.set(ringExpansion * 1.1, ringExpansion * 1.1, ringExpansion * 1.1);
     }
 
     if (cubesGroupRef.current) {
-      cubesGroupRef.current.rotation.y += delta * 0.25;
+      cubesGroupRef.current.rotation.y += delta * (0.25 + scrollProgress * 1.5);
+      const cubeDispersal = 1 + scrollProgress * 0.8;
+      cubesGroupRef.current.scale.set(cubeDispersal, cubeDispersal, cubeDispersal);
     }
   });
 

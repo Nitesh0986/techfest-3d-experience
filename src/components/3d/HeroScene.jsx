@@ -16,43 +16,67 @@ function CameraRig({ scrollProgress, mouse, focusTarget }) {
     const my = Number.isFinite(mouse?.y) ? mouse.y : 0;
     const sp = Number.isFinite(scrollProgress) ? Math.max(0, Math.min(1, scrollProgress)) : 0;
 
-    let targetX = mx * 1.2;
-    let targetY = my * 0.8;
+    let targetX = mx * 1.0;
+    let targetY = my * 0.6;
     let targetZ = 7.5;
     let lookX = 0;
     let lookY = 0;
     let lookZ = 0;
 
     if (focusTarget && Array.isArray(focusTarget.coords)) {
-      // Zoom into selected object
+      // Zoom into selected object on hero
       targetX = focusTarget.coords[0] * 0.85;
       targetY = focusTarget.coords[1] * 0.85 + 0.3;
-      targetZ = focusTarget.coords[2] + 2.5;
+      targetZ = focusTarget.coords[2] + 2.4;
       lookX = focusTarget.coords[0];
       lookY = focusTarget.coords[1];
       lookZ = focusTarget.coords[2];
     } else {
-      if (sp < 0.25) {
-        const factor = sp / 0.25;
-        targetZ = THREE.MathUtils.lerp(7.5, 4.8, factor);
-        targetY += THREE.MathUtils.lerp(0, 0.4, factor);
-      } else if (sp < 0.55) {
-        const factor = (sp - 0.25) / 0.3;
-        targetZ = THREE.MathUtils.lerp(4.8, 2.2, factor);
-        targetY += THREE.MathUtils.lerp(0.4, 1.2, factor);
-        targetX += THREE.MathUtils.lerp(0, 2.0, factor);
-        lookY = THREE.MathUtils.lerp(0, 0.5, factor);
+      if (sp < 0.16) {
+        // SECTION 1: HERO - Camera at standard distance, full central view
+        const f = sp / 0.16;
+        targetZ = THREE.MathUtils.lerp(7.5, 5.2, f);
+        targetY += THREE.MathUtils.lerp(0, 0.3, f);
+      } else if (sp < 0.36) {
+        // SECTION 2: ABOUT - Camera slowly approaches the object
+        const f = (sp - 0.16) / 0.20;
+        targetZ = THREE.MathUtils.lerp(5.2, 3.4, f);
+        targetY += THREE.MathUtils.lerp(0.3, 0.7, f);
+        targetX += THREE.MathUtils.lerp(0, 1.2, f);
+        lookY = THREE.MathUtils.lerp(0, 0.3, f);
+      } else if (sp < 0.56) {
+        // SECTION 3: DOMAINS - Object rotates and tilts, camera glides to side
+        const f = (sp - 0.36) / 0.20;
+        targetZ = THREE.MathUtils.lerp(3.4, 2.0, f);
+        targetY += THREE.MathUtils.lerp(0.7, 0.1, f);
+        targetX += THREE.MathUtils.lerp(1.2, -1.6, f);
+        lookX = THREE.MathUtils.lerp(0, -0.4, f);
+      } else if (sp < 0.76) {
+        // SECTION 4: TIMELINE - Camera moves straight THROUGH the core rings into the warp path
+        const f = (sp - 0.56) / 0.20;
+        targetZ = THREE.MathUtils.lerp(2.0, -1.2, f);
+        targetY += THREE.MathUtils.lerp(0.1, -0.3, f);
+        targetX += THREE.MathUtils.lerp(-1.6, 0.2, f);
+        lookZ = THREE.MathUtils.lerp(0, -3.5, f);
+      } else if (sp < 0.90) {
+        // SECTION 5: CHALLENGE - Particle field expands, camera pivots into hyper-focus
+        const f = (sp - 0.76) / 0.14;
+        targetZ = THREE.MathUtils.lerp(-1.2, -3.2, f);
+        targetY += THREE.MathUtils.lerp(-0.3, 0.2, f);
+        targetX += THREE.MathUtils.lerp(0.2, 0.8, f);
+        lookZ = THREE.MathUtils.lerp(-3.5, -6.0, f);
       } else {
-        const factor = Math.min((sp - 0.55) / 0.45, 1);
-        targetZ = THREE.MathUtils.lerp(2.2, 0.8, factor);
-        targetY += THREE.MathUtils.lerp(1.2, -1.0, factor);
-        targetX += THREE.MathUtils.lerp(2.0, -1.5, factor);
-        lookZ = THREE.MathUtils.lerp(0, -3.0, factor);
+        // SECTION 6 & 7: FUTURE LAB & CTA - Expansive cosmic horizon perspective
+        const f = Math.min((sp - 0.90) / 0.10, 1);
+        targetZ = THREE.MathUtils.lerp(-3.2, -5.0, f);
+        targetY += THREE.MathUtils.lerp(0.2, 0.0, f);
+        targetX += THREE.MathUtils.lerp(0.8, 0.0, f);
+        lookZ = THREE.MathUtils.lerp(-6.0, -9.0, f);
       }
     }
 
-    currentPos.current.lerp(new THREE.Vector3(targetX, targetY, targetZ), 0.05);
-    currentLookAt.current.lerp(new THREE.Vector3(lookX, lookY, lookZ), 0.05);
+    currentPos.current.lerp(new THREE.Vector3(targetX, targetY, targetZ), 0.06);
+    currentLookAt.current.lerp(new THREE.Vector3(lookX, lookY, lookZ), 0.06);
   });
 
   return (
@@ -101,7 +125,7 @@ function HeroFallback() {
 
 export default function HeroScene({ scrollProgress, mouse, onSelectObject, focusTarget }) {
   return (
-    <div className="w-full h-full absolute inset-0 -z-10 pointer-events-auto">
+    <div className="w-full h-full fixed inset-0 -z-10 pointer-events-auto">
       <ErrorBoundary fallback={<HeroFallback />}>
         <Canvas
           camera={{ position: [0, 0, 7.5], fov: 45 }}
@@ -131,7 +155,7 @@ export default function HeroScene({ scrollProgress, mouse, onSelectObject, focus
               focusTarget={focusTarget}
             />
             <OrbitalCore scrollProgress={scrollProgress} mouse={mouse} />
-            <InteractivePillars onSelectObject={onSelectObject} />
+            <InteractivePillars onSelectObject={onSelectObject} scrollProgress={scrollProgress} />
             <ParticleField scrollProgress={scrollProgress} mouse={mouse} count={1100} />
             <HolographicGrid />
           </Suspense>

@@ -37,13 +37,17 @@ export default function ParticleField({ count = 1200, scrollProgress = 0, mouse 
   useFrame((state, delta) => {
     if (!pointsRef.current) return;
 
-    // Slow ambient rotation
-    pointsRef.current.rotation.y += delta * 0.05 + mouse.x * 0.001;
-    pointsRef.current.rotation.x += delta * 0.02 - mouse.y * 0.001;
+    // Slow ambient rotation responding to mouse
+    pointsRef.current.rotation.y += delta * 0.04 + mouse.x * 0.002;
+    pointsRef.current.rotation.x += delta * 0.02 - mouse.y * 0.002;
 
-    // Scroll expansion effect
-    const expansion = 1 + scrollProgress * 1.5;
-    pointsRef.current.scale.set(expansion, expansion, expansion);
+    // Hyperspace stream & expansion effect
+    const expansion = 1 + scrollProgress * 1.8;
+    pointsRef.current.scale.set(expansion, expansion, expansion + scrollProgress * 1.2);
+
+    // Subtle breathing pulse
+    const pulse = 1 + Math.sin(state.clock.getElapsedTime() * 1.2) * 0.03;
+    pointsRef.current.scale.multiplyScalar(pulse);
   });
 
   return (

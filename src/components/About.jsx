@@ -1,4 +1,4 @@
-import { useRef, Suspense } from 'react';
+import { useRef, Suspense, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { motion, useInView } from 'framer-motion';
 import { Sparkles, Terminal, Activity, Layers } from 'lucide-react';
@@ -59,6 +59,35 @@ function QuantumGyroscope() {
 }
 
 function StatCounter({ stat, isInView }) {
+  const [displayValue, setDisplayValue] = useState(typeof stat.value === 'number' ? 0 : stat.value);
+
+  useEffect(() => {
+    if (!isInView || typeof stat.value !== 'number') return;
+
+    let start = 0;
+    const end = stat.value;
+    const duration = 1600; // ms
+    const startTime = performance.now();
+
+    const update = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.floor(eased * end);
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      } else {
+        setDisplayValue(end);
+      }
+    };
+
+    const frameId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(frameId);
+  }, [isInView, stat.value]);
+
   return (
     <div className="p-6 rounded-2xl glass-panel border border-cyan-500/20 relative group hover:border-cyan-400/50 transition-all duration-300">
       <div className="absolute -top-3 left-6 px-2 py-0.5 rounded text-[10px] font-mono tracking-wider bg-[#030712] border border-cyan-500/40 text-cyan-400 uppercase">
@@ -67,7 +96,7 @@ function StatCounter({ stat, isInView }) {
 
       <div className="flex items-baseline gap-1 mt-2">
         <span className="font-orbitron text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-200 to-purple-400">
-          {stat.value}
+          {displayValue}
         </span>
         <span className="font-orbitron text-2xl sm:text-3xl font-bold text-cyan-400">
           {stat.suffix}
@@ -94,7 +123,7 @@ export default function About() {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section id="about" ref={ref} className="relative py-28 sm:py-36 bg-[#030712]/90 border-t border-cyan-500/10 overflow-hidden">
+    <section id="about" ref={ref} className="relative py-28 sm:py-36 bg-[#030712]/80 backdrop-blur-md border-t border-cyan-500/10 overflow-hidden">
       {/* Background radial glow */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 rounded-full bg-cyan-500/5 blur-[120px] pointer-events-none" />
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 rounded-full bg-purple-500/5 blur-[120px] pointer-events-none" />

@@ -138,7 +138,7 @@ export default function Domains() {
   const [activeModalDomain, setActiveModalDomain] = useState(null);
 
   return (
-    <section id="domains" className="relative py-28 sm:py-36 bg-[#030712] border-t border-cyan-500/10">
+    <section id="domains" className="relative py-28 sm:py-36 bg-[#030712]/75 backdrop-blur-md border-t border-cyan-500/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">

@@ -10,7 +10,7 @@ export default function Challenge({ onOpenRegisterModal }) {
   };
 
   return (
-    <section id="challenge" className="relative py-28 sm:py-36 bg-[#030712] border-t border-cyan-500/10 overflow-hidden">
+    <section id="challenge" className="relative py-28 sm:py-36 bg-[#030712]/75 backdrop-blur-md border-t border-cyan-500/10 overflow-hidden">
       {/* Background cyber lighting */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-purple-600/10 rounded-full blur-[160px] pointer-events-none" />
 

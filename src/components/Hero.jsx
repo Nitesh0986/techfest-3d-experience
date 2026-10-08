@@ -1,11 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowDown, Sparkles, X, ChevronRight, Compass } from 'lucide-react';
-import HeroScene from './3d/HeroScene';
 import { soundManager } from '../utils/audio';
 
 export default function Hero({
-  scrollProgress,
-  mouse,
   selectedObject,
   setSelectedObject,
   onOpenRegisterModal
@@ -20,14 +17,6 @@ export default function Hero({
 
   return (
     <section id="hero" className="relative w-full h-screen min-h-[700px] overflow-hidden flex flex-col justify-between">
-      {/* 3D Background Scene */}
-      <HeroScene
-        scrollProgress={scrollProgress}
-        mouse={mouse}
-        onSelectObject={(obj) => setSelectedObject(obj)}
-        focusTarget={selectedObject}
-      />
-
       {/* Top spacing to offset fixed navbar */}
       <div className="pt-24" />
 
